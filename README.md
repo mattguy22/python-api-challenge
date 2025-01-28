@@ -6,7 +6,7 @@ This project involves using Python APIs, data analysis, and visualization tools 
 References: 
 1.  APIs: Used OpenWeatherMap API for weather data, Geoapify API for locating nearby hotels.
 2.  WeatherPY: Used Module 5 materials for scatter plot creation, and visualization.  Referenced ChatGPT for to dynamically add the current date to plot titles, and to add grid lines to the scatter plots for better readability.  Carlos Gattron durring a tutoring session assisted in the build of the API base URL.  
-3.  VacationPy: On top of the provided code used Module 6 for creating and displaying map plots, API requests code, and json conversion code.  Referenced ChatGPT for filtering and cleaning data including the droping of any rows with null values.  Carlos Gattron durring a tutoring sessions assisted with refinement of the Step2 dataframe for ideal weather conditions, and with the Step4 parameters build.  
+3.  VacationPy: On top of the provided code used Module 6 for creating and displaying map plots, API requests code, and json conversion code.  Referenced ChatGPT for filtering and cleaning data including the droping of any rows with null values.  Carlos Gattron durring a tutoring sessions assisted with refinement of the Step2 dataframe for ideal weather conditions, with the Step4 parameters build and the error handling.    
 
 
 
