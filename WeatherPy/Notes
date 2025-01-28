@@ -1,0 +1,103 @@
+
+
+VacationPy Step2: 
+1. #Instructor Code Narrowing downt the city_data_df for ideal weather conditions 
+# Define ideal weather conditions
+temp_condition = (city_data_df["Max Temp"].between(21, 27))  # More efficient than two comparisons
+wind_condition = (city_data_df["Wind Speed"] < 4.5)
+cloud_condition = (city_data_df["Cloudiness"] == 0)
+
+# Create DataFrame with ideal weather conditions
+ideal_cities_df = city_data_df[
+    temp_condition &
+    wind_condition & 
+    cloud_condition
+].copy()  # Using .copy() prevents SettingWithCopyWarning
+
+# Drop any rows with null values and display info about remaining cities
+ideal_cities_df = ideal_cities_df.dropna()
+print(f"Found {len(ideal_cities_df)} cities with ideal weather conditions")
+
+2. #My original code Narrowing downt the city_data_df for ideal weather conditions 
+# Narrow down cities that fit criteria and drop any results with null values
+ideal_cities_df = city_data_df[
+    (city_data_df["Max Temp"] > 21) & # Ideal temperature higher than 21 degrees
+    (city_data_df["Max Temp"] < 27) & # Ideal temperature lower than 27 degrees
+    (city_data_df["Wind Speed"] < 4.5) & # Ideal wind speed less than 4.5 m/s
+    (city_data_df["Cloudiness"] == 0) # Ideal zero cloudiness 
+]
+
+# Drop any rows with null values
+ideal_cities_df = ideal_cities_df.dropna()
+
+# Display sample data
+ideal_cities_df
+
+#--------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------
+
+VacationPy Step4: 
+1.  # Instructur Paramters
+# Base URL (like the building address and department)
+base_url = "https://api.geoapify.com/v2/places"
+
+# Parameters (like specific instructions for what we want)
+params = {
+    "categories": "accommodation.hotel",  # Looking specifically for hotels
+    "filter": f"circle:{longitude},{latitude},{radius}",  # Where to look
+    "apiKey": geoapify_key  # Our ID badge to get in
+}
+
+# When combined, it creates a complete request like:
+# https://api.geoapify.com/v2/places?categories=accommodation.hotel&filter=circle:-104.98,39.74,10000&apiKey=your_key
+
+2.  se_url = "https://api.geoapify.com/v2/places"  # Walking up to the front desk
+first_parameter = "?categories=accommodation.hotel"  # First question on the form
+second_parameter = "&apiKey=your_key"              # Second question on the form
+third_parameter = "&filter=circle:-104.98,39.74,10000"  # Third question on the form
+
+
+3.  #My initial code 
+# Set parameters to search for a hotel, returning only the first hotel located 
+radius = 10000
+params = {
+    "categories": "accommodation.hotel", 
+    "filter": f"circle:{longitude},{latitude},{radius}",
+    "apiKey": geoapify_key
+
+}
+
+# Print a message to follow up the hotel search
+print("Starting hotel search")
+
+# Iterate through the hotel_df DataFrame
+for index, row in hotel_df.iterrows():
+    # get latitude, longitude from the DataFrame
+    latitude = row["Lat"]
+    longitude = row["Lng"]
+
+    # Add the current city's latitude and longitude to the params dictionary
+    params["filter"] = f"circle:{longitude}, {latitude}, {radius}"
+    params["bias"] = f"proximity:{longitude}, {latitude}"
+
+    # Set base URL
+    base_url = "https://api.geoapify.com/v2/places"
+
+    # Make and API request using the params dictionary 
+    name_adress = requests.get(base_url, params=params)
+
+    # Convert the API response to JSON format
+    name_adress = name_adress.json()
+
+    # Grab the first hotel from the results and store the name in the hotel_df DataFrame
+    try:
+        hotel_df.loc[index, "Hotel Name"] = name_adress["features"][0]["properties"]["name"]
+    except (KeyError, IndexError):
+        # If no hotel is found, set the hotel name as "No hotel found".
+        hotel_df.loc[index, "Hotel Name"] = "No hotel found"
+
+    # Log the search results
+    print(f"{hotel_df.loc[index, 'City']} - nearest hotel: {hotel_df.loc[index, 'Hotel Name']}")
+
+# Display sample data
+hotel_df
