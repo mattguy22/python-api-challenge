@@ -57,8 +57,8 @@ second_parameter = "&apiKey=your_key"              # Second question on the form
 third_parameter = "&filter=circle:-104.98,39.74,10000"  # Third question on the form
 
 
-3.  #My initial code 
-# Set parameters to search for a hotel, returning only the first hotel located 
+STEP 4: My initial code 
+2.  # Set parameters to search for a hotel, returning only the first hotel located 
 radius = 10000
 params = {
     "categories": "accommodation.hotel", 
@@ -97,6 +97,48 @@ for index, row in hotel_df.iterrows():
         hotel_df.loc[index, "Hotel Name"] = "No hotel found"
 
     # Log the search results
+    print(f"{hotel_df.loc[index, 'City']} - nearest hotel: {hotel_df.loc[index, 'Hotel Name']}")
+
+# Display sample data
+hotel_df
+
+
+STEP 4: My Initial Code 2
+# Set parameters to search for a hotel, returning only the first hotel located 
+radius = 10000
+params = {
+    "categories": "accommodation.hotel", 
+    "apiKey": geoapify_key
+}
+
+# Print a message to follow up the hotel search
+print("Starting hotel search")
+
+# Iterate through the hotel_df DataFrame
+for index, row in hotel_df.iterrows():
+    # Get latitude, longitude from the DataFrame
+    latitude = row["Lat"]
+    longitude = row["Lng"]
+
+    # Add the current city's latitude and longitude to the params dictionary
+    params["filter"] = f"circle:{longitude},{latitude},{radius}"
+    params["bias"] = f"proximity:{longitude},{latitude}"
+
+    # Set base URL
+    base_url = "https://api.geoapify.com/v2/places"
+
+    # Make an API request using the params dictionary
+    name_adress = requests.get(base_url, params=params).json()
+
+    # Check if "features" key exists and is non-empty
+    if "features" in name_adress and len(name_adress["features"]) > 0:
+        # Grab the hotel name if available
+        hotel_df.loc[index, "Hotel Name"] = name_adress["features"][0]["properties"].get("name", "No name available")
+    else:
+        # No results found
+        hotel_df.loc[index, "Hotel Name"] = "No hotel found"
+
+    # Print out the search results
     print(f"{hotel_df.loc[index, 'City']} - nearest hotel: {hotel_df.loc[index, 'Hotel Name']}")
 
 # Display sample data
